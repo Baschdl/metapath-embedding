@@ -1,9 +1,7 @@
 import os
 from two_class_dict import TwoWayDict
-
-infile_name = "MetaPaths-5-0.8_0_17414227.txt"
-outfile_name = "MetaPaths-5-0.8_0_17414227_converted.txt"
-filepath = "/Users/Sebastian/hpi/bachelorproject/metapath-embedding"
+import time
+import argparse
 
 
 class Converter():
@@ -12,7 +10,7 @@ class Converter():
     @staticmethod
     def find_max_node_id(file_path: str):
         max_node_id = -1
-        with open(os.path.join(filepath, infile_name), "r") as infile:
+        with open(file_path, "r") as infile:
             for line in infile:
                 line_separated = line[:-1].split("|")
                 i = 0
@@ -47,7 +45,8 @@ class Converter():
                     i = 0
                     for char_converted, char_original in zip(line_converted, line_original[:-1].split("|")):
                         if i % 2 == 0:
-                            assert self.d[char_converted] == int(char_original), str(self.d[char_converted]) + "!=" + str(
+                            assert self.d[char_converted] == int(char_original), str(
+                                self.d[char_converted]) + "!=" + str(
                                 char_original) + " for nodes"
                         else:
                             assert self.d[char_converted] - max_node_id == int(char_original), str(
@@ -55,14 +54,46 @@ class Converter():
                         i += 1
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('--dirpath',
+                        help='Path where meta-path files are located',
+                        type=str,
+                        required=True)
+
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    args = parse_arguments()
+
     converter = Converter()
-    max_node_id = converter.find_max_node_id(os.path.join(filepath, infile_name))
+    max_node_id = -1
+    start = time.time()
+    for file in os.listdir(args.dirpath):
+        if not '_converted.txt' in file:
+            file_max_node_id = converter.find_max_node_id(os.path.join(args.dirpath, file))
+            if file_max_node_id > max_node_id:
+                max_node_id = file_max_node_id
+    end = time.time()
+    print("Max node time: {}".format(end - start))
     print('Max_node_id is {}'.format(max_node_id))
 
-    converter.convert_file(os.path.join(filepath, infile_name), os.path.join(filepath, outfile_name), max_node_id)
+    start = time.time()
+    for file in os.listdir(args.dirpath):
+        if not '_converted.txt' in file:
+            converter.convert_file(os.path.join(args.dirpath, file), os.path.join(args.dirpath, file[:-4] + '_converted.txt'),
+                                   max_node_id)
+    end = time.time()
+    print("Converting time is {}".format(end - start))
 
     print("Reversing...")
-    converter.check_bijection(os.path.join(filepath, infile_name), os.path.join(filepath, outfile_name), max_node_id)
+    start = time.time()
+    for file in os.listdir(args.dirpath):
+        if not '_converted.txt' in file:
+            converter.check_bijection(os.path.join(args.dirpath, file), os.path.join(args.dirpath, file[:-4] + "_converted.txt"),
+                                      max_node_id)
+    end = time.time()
+    print("Check bijection time is {}".format(end - start))
 
     print("Finished")
