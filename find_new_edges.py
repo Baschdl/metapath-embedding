@@ -1,4 +1,5 @@
 import argparse
+from tqdm import tqdm
 
 
 class NewEdgeFinder():
@@ -14,7 +15,7 @@ class NewEdgeFinder():
         return self._find_new_edges()
 
     def _fill_dictionary(self):
-        for edge in open(self.earlier_edge_list_filepath, 'r'):
+        for edge in tqdm(open(self.earlier_edge_list_filepath, 'r')):
             node1, node2 = self.split_edge(edge)
             if self.directed:
                 self.edges_earlier_db[(node1, node2)] = True
@@ -28,7 +29,7 @@ class NewEdgeFinder():
 
     def _find_new_edges(self):
         new_edges = {}
-        for edge in open(self.later_edge_list_filepath, 'r'):
+        for edge in tqdm(open(self.later_edge_list_filepath, 'r')):
             node1, node2 = self.split_edge(edge)
             if not (node1, node2) in self.edges_earlier_db:
                 if self.directed:
