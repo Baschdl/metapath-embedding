@@ -16,8 +16,13 @@ class Converter():
                 line_separated = line[:-1].split("|")
                 i = 0
                 for char_number in line_separated:
-                    if i % 2 == 0 and int(char_number) > max_node_id:
-                        max_node_id = int(char_number)
+                    try:
+                        number = int(char_number)
+                    except ValueError as e:
+                        print("Error for file {} in line '{}'".format(file_path, line))
+                        print(e)
+                    if i % 2 == 0 and number > max_node_id:
+                        max_node_id = number
                     i += 1
         return max_node_id
 
