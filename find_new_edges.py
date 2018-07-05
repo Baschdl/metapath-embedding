@@ -1,5 +1,6 @@
 import argparse
 from tqdm import tqdm
+import pickle
 
 
 class NewEdgeFinder():
@@ -60,6 +61,9 @@ def parse_arguments():
                         help='Treat graph as directed',
                         type=bool,
                         default=True)
+    parser.add_argument('--new_edges_file',
+                        help='Path where the pickled list of new edges should be saved',
+                        type=str)
 
     return parser.parse_args()
 
@@ -67,4 +71,5 @@ def parse_arguments():
 if __name__ == "__main__":
     args = parse_arguments()
     new_edges = NewEdgeFinder(args.earlier_edge_list, args.later_edge_list, args.directed).find()
-    print(new_edges)
+    if args.new_edges_file is not None:
+        pickle.dump(new_edges, args.new_edges_file)
