@@ -9,11 +9,18 @@ class Converter():
     d = TwoWayDict()
 
     @staticmethod
+    def split_line(self, line):
+        if line[-1] == '\n':
+            return line[:-1].split("|")
+        else:
+            return line.split("|")
+
+    @staticmethod
     def find_max_node_id(file_path: str):
         max_node_id = -1
         with open(file_path, "r") as infile:
             for line in infile:
-                line_separated = line[:-1].split("|")
+                line_separated = Converter.split_line(line)
                 i = 0
                 for char_number in line_separated:
                     try:
@@ -30,7 +37,7 @@ class Converter():
         with open(infile_path, "r") as infile:
             with open(outfile_path, "w") as outfile:
                 for line in infile:
-                    line_separated = line[:-1].split("|")
+                    line_separated = Converter.split_line(line)
                     line_utf = []
                     i = 0
                     for char_number in line_separated:
