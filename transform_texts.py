@@ -2,6 +2,7 @@ import os
 from two_class_dict import TwoWayDict
 import time
 import argparse
+from tqdm import tqdm
 
 
 class Converter():
@@ -70,7 +71,7 @@ if __name__ == "__main__":
     converter = Converter()
     max_node_id = -1
     start = time.time()
-    for file in os.listdir(args.dirpath):
+    for file in tqdm(os.listdir(args.dirpath)):
         if not '_converted.txt' in file:
             file_max_node_id = converter.find_max_node_id(os.path.join(args.dirpath, file))
             if file_max_node_id > max_node_id:
@@ -80,18 +81,20 @@ if __name__ == "__main__":
     print('Max_node_id is {}'.format(max_node_id))
 
     start = time.time()
-    for file in os.listdir(args.dirpath):
+    for file in tqdm(os.listdir(args.dirpath)):
         if not '_converted.txt' in file:
-            converter.convert_file(os.path.join(args.dirpath, file), os.path.join(args.dirpath, file[:-4] + '_converted.txt'),
+            converter.convert_file(os.path.join(args.dirpath, file),
+                                   os.path.join(args.dirpath, file[:-4] + '_converted.txt'),
                                    max_node_id)
     end = time.time()
     print("Converting time is {}".format(end - start))
 
     print("Reversing...")
     start = time.time()
-    for file in os.listdir(args.dirpath):
+    for file in tqdm(os.listdir(args.dirpath)):
         if not '_converted.txt' in file:
-            converter.check_bijection(os.path.join(args.dirpath, file), os.path.join(args.dirpath, file[:-4] + "_converted.txt"),
+            converter.check_bijection(os.path.join(args.dirpath, file),
+                                      os.path.join(args.dirpath, file[:-4] + "_converted.txt"),
                                       max_node_id)
     end = time.time()
     print("Check bijection time is {}".format(end - start))
