@@ -41,7 +41,11 @@ class Converter():
                     line_utf = []
                     i = 0
                     for char_number in line_separated:
-                        number = int(char_number)
+                        try:
+                            number = int(char_number)
+                        except ValueError as e:
+                            print("Error for file {} in line '{}'".format(infile_path, line))
+                            print(e)
                         if i % 2 == 0:
                             self.d[number] = chr(number)
                             line_utf.append(self.d[number])
