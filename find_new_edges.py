@@ -72,5 +72,5 @@ if __name__ == "__main__":
     args = parse_arguments()
     new_edges = NewEdgeFinder(args.earlier_edge_list, args.later_edge_list, args.directed).find()
     if args.new_edges_file is not None:
-        file = open(args.new_edges_file, 'w')
+        file = open(args.new_edges_file, 'wb')
         pickle.dump(new_edges, file)
