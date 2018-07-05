@@ -9,7 +9,7 @@ class Converter():
     d = TwoWayDict()
 
     @staticmethod
-    def split_line(self, line):
+    def split_line(line):
         if line[-1] == '\n':
             return line[:-1].split("|")
         else:
