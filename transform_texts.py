@@ -77,6 +77,10 @@ def parse_arguments():
                         help='Path where meta-path files are located',
                         type=str,
                         required=True)
+    parser.add_argument('--check_bijection',
+                        help="Enable checking that the utf8 file can be converted back to the original file",
+                        default=False,
+                        type=bool)
 
     return parser.parse_args()
 
@@ -98,21 +102,22 @@ if __name__ == "__main__":
 
     start = time.time()
     for file in tqdm(os.listdir(args.dirpath)):
-        if not '_converted.txt' in file:
+        if not '_converted.txt' in file or os.path.exists(file[:-4] + '_converted.txt'):
             converter.convert_file(os.path.join(args.dirpath, file),
                                    os.path.join(args.dirpath, file[:-4] + '_converted.txt'),
                                    max_node_id)
     end = time.time()
     print("Converting time is {}".format(end - start))
 
-    print("Reversing...")
-    start = time.time()
-    for file in tqdm(os.listdir(args.dirpath)):
-        if not '_converted.txt' in file:
-            converter.check_bijection(os.path.join(args.dirpath, file),
-                                      os.path.join(args.dirpath, file[:-4] + "_converted.txt"),
-                                      max_node_id)
-    end = time.time()
-    print("Check bijection time is {}".format(end - start))
+    if args.check_bijection:
+        print("Reversing...")
+        start = time.time()
+        for file in tqdm(os.listdir(args.dirpath)):
+            if not '_converted.txt' in file:
+                converter.check_bijection(os.path.join(args.dirpath, file),
+                                          os.path.join(args.dirpath, file[:-4] + "_converted.txt"),
+                                          max_node_id)
+        end = time.time()
+        print("Check bijection time is {}".format(end - start))
 
     print("Finished")
