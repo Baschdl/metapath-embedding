@@ -79,7 +79,7 @@ if __name__ == "__main__":
     pool = Pool(processes=args.processes)
     files = [os.path.join(args.dirpath, file) for file in os.listdir(args.dirpath) if not '_converted.txt' in file]
     results = []
-    for x in tqdm.tqdm(pool.map(Converter.find_max_node_id, files), total=len(files)):
+    for x in tqdm(pool.map(Converter.find_max_node_id, files), total=len(files)):
         results.append(x)
     max_node_id = -1
     for file_max_node_id in results:
@@ -96,7 +96,7 @@ if __name__ == "__main__":
             for file in os.listdir(args.dirpath) if
             not '_converted.txt' in file or os.path.exists(file[:-4] + '_converted.txt')]
 
-    for _ in tqdm.tqdm(pool.map(Converter.convert_file, args), total=len(args)):
+    for _ in tqdm(pool.map(Converter.convert_file, args), total=len(args)):
         pass
 
     end = time.time()
