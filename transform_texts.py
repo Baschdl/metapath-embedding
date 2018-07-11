@@ -4,6 +4,7 @@ import time
 import argparse
 from tqdm import tqdm
 from multiprocessing import Pool
+from typing import Tuple
 
 
 class Converter():
@@ -35,7 +36,8 @@ class Converter():
         return max_node_id
 
     @staticmethod
-    def convert_file(infile_path: str, outfile_path: str, max_node_id: int):
+    def convert_file(args: Tuple[str, str, int]):
+        infile_path, outfile_path, max_node_id = args
         with open(infile_path, "r") as infile:
             with open(outfile_path, "w") as outfile:
                 for line in infile:
@@ -76,17 +78,16 @@ if __name__ == "__main__":
     converter = Converter()
     start = time.time()
 
+    print('Searching max_node_id...')
     pool = Pool(processes=args.processes)
     files = [os.path.join(args.dirpath, file) for file in os.listdir(args.dirpath) if not '_converted.txt' in file]
-    results = []
-    for x in tqdm(pool.map(Converter.find_max_node_id, files), total=len(files)):
-        results.append(x)
+    results = pool.map(Converter.find_max_node_id, files)
     max_node_id = -1
     for file_max_node_id in results:
         if file_max_node_id > max_node_id:
             max_node_id = file_max_node_id
     end = time.time()
-    print("Max node time: {}".format(end - start))
+    print("Max node time: {} seconds".format(end - start))
     print('Max_node_id is {}'.format(max_node_id))
 
     start = time.time()
@@ -96,8 +97,7 @@ if __name__ == "__main__":
             for file in os.listdir(args.dirpath) if
             not '_converted.txt' in file or os.path.exists(file[:-4] + '_converted.txt')]
 
-    for _ in tqdm(pool.map(Converter.convert_file, args), total=len(args)):
-        pass
+    pool.map(Converter.convert_file, args)
 
     end = time.time()
     print("Converting time is {}".format(end - start))
