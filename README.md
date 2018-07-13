@@ -6,7 +6,7 @@ Checkout `mps-between-instances-per_startnode` from https://github.com/KDD-OpenS
 Copy `graph-....jar` to plugins folder
 
 ## Import data into neo4j
-Import three (**two?**) different wikidata dumps into neo4j instances using https://github.com/findie/wikidata-neo4j-importer
+Import two different wikidata dumps into neo4j instances using https://github.com/findie/wikidata-neo4j-importer
 - Mount built neo4j-graph-algorithms plugin
 - Allow execution of plugin
 
@@ -20,9 +20,10 @@ Remove test label
 Delete all nodes with types != Entity
 
 ## Mine meta-paths on t_1 and t_2
-**TODO**: Mount /tmp/between_instances from docker container into local file system
+Mount /tmp/between_instances from docker container into local file system
 Optional: Load graph
 Run mining algorithm
+**TODO:** Build training examples with converted meta-paths
 Convert files with `python3 transform_texts.py`
 Concatenate converted meta-path files `echo data/*_converted.txt | xargs cat > data/all.txt`
 
@@ -35,6 +36,16 @@ Download the edge lists with `download_edgelist_Qid.sh`
 **TODO:** Add bolder warning for failed downloads
 Append the edge lists to one big list with `concat_edgelists_Qid.sh`
 Find new edges with `python3 find_new_edges.py`
+
+## Mine meta-paths for positive and negative edges
+### Positive edges
+**TODO:** Convert list with new edges from previous step to list of neo4j ids
+Start mining with something like `CALL algo.computeAllMetaPathsBetweenInstances(5, 0, 0.999, {'edgelistFilepath':'/tmp/between_instances/positive_edgelist.txt'})`
+
+### Negative edges
+**TODO:** Sample negative edges in t_1
+**TODO:** Check that they are not in the list of new edges
+Start mining with something like `CALL algo.computeAllMetaPathsBetweenInstances(5, 0, 0.999, {'edgelistFilepath':'/tmp/between_instances/negative_edgelist.txt'})`
 
 ## Train link prediction classifier
 Build negative samples
