@@ -44,12 +44,10 @@ Import two different wikidata dumps into neo4j instances using https://github.co
 - Start mining with something like `CALL algo.computeAllMetaPathsBetweenInstances(5, 0, 0.999, {'edgelistFilepath':'/tmp/between_instances/positive_edgelist.txt'})`
 
 ### Negative edges
-- **TODO:** Sample negative edges in t_1
+- **TODO:** Sample negative edges in t_1 by looping through mined meta-paths and look which nodes don't have a edge
 - **TODO:** Check that they are not in the list of new edges
-- Start mining with something like `CALL algo.computeAllMetaPathsBetweenInstances(5, 0, 0.999, {'edgelistFilepath':'/tmp/between_instances/negative_edgelist.txt'})`
 
 ## Train link prediction classifier
-- Build negative samples
 - Labels are the nodes with a new edge, features are the combined embeddings of the meta-paths between the two nodes
 
 # Competitors
