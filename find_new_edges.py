@@ -1,6 +1,7 @@
 import argparse
 from tqdm import tqdm
 import pickle
+from typing import List
 
 
 class NewEdgeFinder():
@@ -28,7 +29,7 @@ class NewEdgeFinder():
                 else:
                     self.edges_earlier_db[(node1, node2)] = True
 
-    def _find_new_edges(self):
+    def _find_new_edges(self) -> List:
         new_edges = {}
         for edge in tqdm(open(self.later_edge_list_filepath, 'r')):
             node1, node2 = self.split_edge(edge)
@@ -40,7 +41,8 @@ class NewEdgeFinder():
                         new_edges[(node1, node2)] = True
         return list(new_edges.keys())
 
-    def split_edge(self, edge):
+    @staticmethod
+    def split_edge(edge):
         if edge[-1] == '\n':
             return edge[:-1].split(" ")
         else:
@@ -72,5 +74,6 @@ if __name__ == "__main__":
     args = parse_arguments()
     new_edges = NewEdgeFinder(args.earlier_edge_list, args.later_edge_list, args.directed).find()
     if args.new_edges_file is not None:
-        file = open(args.new_edges_file, 'wb')
-        pickle.dump(new_edges, file)
+        file = open(args.new_edges_file, 'w')
+        for node1,node2 in new_edges:
+            file.write("{} {}\n".format(node1, node2))

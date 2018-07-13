@@ -15,6 +15,6 @@ do
          -d "${query}" \
          -u neo4j:caramelBunny1998\
          http://localhost:8888/db/data/transaction/commit \
-         | jq -r '(.results[0]) | .columns,.data[].row | @csv' > edgelist-wikidata-$((i * size_of_download_in_nodes)).csv
+         | jq -r '(.results[0]) | .columns,.data[].row | @csv' > edgelist-wikidata-$((i * size_of_download_in_nodes))-Qid.csv
     i=$((i + 1))
 done
