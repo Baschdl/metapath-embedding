@@ -2,7 +2,6 @@ import os
 from two_class_dict import TwoWayDict
 import time
 import argparse
-from tqdm import tqdm
 from multiprocessing import Pool
 from typing import Tuple
 import itertools
@@ -105,6 +104,9 @@ def parse_arguments():
                         help='Specify maximal number of sentences per node pair',
                         type=int,
                         required=True)
+    parser.add_argument('--max_node_id',
+                        help='Specify max_node_id obtained from another run of the program',
+                        type=int)
 
     return parser.parse_args()
 
@@ -113,23 +115,26 @@ if __name__ == "__main__":
     args = parse_arguments()
 
     converter = Converter()
-    start = time.time()
 
-    print('Searching max_node_id...')
     pool = Pool(processes=args.processes)
-    files = [os.path.join(args.dirpath, file) for file in os.listdir(args.dirpath) if
-             os.path.isfile(os.path.join(args.dirpath, file)) and not '_converted.txt' in file]
-    results = pool.map(Converter.find_max_node_id, files)
-    max_node_id = -1
-    for file_max_node_id in results:
-        if file_max_node_id > max_node_id:
-            max_node_id = file_max_node_id
-    end = time.time()
-    print("Max node time: {} seconds".format(end - start))
-    print('Max_node_id is {}'.format(max_node_id))
+
+    if args.max_node_id is None:
+        start = time.time()
+        print('Searching max_node_id...')
+        files = [os.path.join(args.dirpath, file) for file in os.listdir(args.dirpath) if
+                 os.path.isfile(os.path.join(args.dirpath, file)) and not '_converted.txt' in file]
+        results = pool.map(Converter.find_max_node_id, files)
+        max_node_id = -1
+        for file_max_node_id in results:
+            if file_max_node_id > max_node_id:
+                max_node_id = file_max_node_id
+        end = time.time()
+        print("Max node time: {} seconds".format(end - start))
+        print('Max_node_id is {}'.format(max_node_id))
+    else:
+        max_node_id = args.max_node_id
 
     start = time.time()
-    # infile_path, outfile_path, outfile_fasttext_path, max_node_id, sentence_length, max_sentences
     args = [(file,
              args.dirpath,
              os.path.join(args.dirpath, 'converted'),
@@ -139,7 +144,7 @@ if __name__ == "__main__":
              args.max_sentences)
             for file in os.listdir(args.dirpath) if
             os.path.isfile(os.path.join(args.dirpath, file)) and
-            not '_converted.txt' in file or
+            '_converted.txt' not in file or
             os.path.exists(os.path.join(args.dirpath, file[:-4] + '_converted.txt')) or
             os.path.exists(os.path.join(args.dirpath, 'converted', file[:-4] + '_converted.txt'))]
 
