@@ -7,6 +7,8 @@ from multiprocessing import Pool
 from typing import Tuple
 import itertools
 import errno
+import scipy
+import random
 
 
 class Converter():
@@ -79,12 +81,10 @@ class Converter():
                         lines_utf.append(line_utf)
                 if sentence_length != 0:
                     with open(outfile_fasttext_path, "w") as outfile:
-                        i = 0
+                        number_of_combinations = scipy.special.binom(sentence_length, len(lines_utf))
                         for combination in itertools.combinations(lines_utf, sentence_length):
-                            if i == max_sentences:
-                                break
-                            outfile.write(" ".join(["".join(x) for x in combination]) + "\n")
-                            i += 1
+                            if random.random() < max_sentences / number_of_combinations:
+                                outfile.write(" ".join(["".join(x) for x in combination]) + "\n")
 
 
 def parse_arguments():
