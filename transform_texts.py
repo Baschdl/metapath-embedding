@@ -5,6 +5,8 @@ import argparse
 from tqdm import tqdm
 from multiprocessing import Pool
 from typing import Tuple
+import itertools
+import errno
 
 
 class Converter():
@@ -36,10 +38,27 @@ class Converter():
         return max_node_id
 
     @staticmethod
-    def convert_file(args: Tuple[str, str, int]):
-        infile_path, outfile_path, max_node_id = args
+    def convert_file(args: Tuple[str, str, str, str, int, int, int]):
+        filename, infile_path, outfile_path, outfile_fasttext_path, max_node_id, sentence_length, max_sentences = args
+
+        try:
+            os.makedirs(outfile_path)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+        try:
+            os.makedirs(outfile_fasttext_path)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+
+        infile_path = os.path.join(infile_path, filename)
+        outfile_path = os.path.join(outfile_path, filename[:-4] + '_converted.txt')
+        outfile_fasttext_path = os.path.join(outfile_fasttext_path, filename[:-4] + '_fasttext.txt')
+
         with open(infile_path, "r") as infile:
             with open(outfile_path, "w") as outfile:
+                lines_utf = []
                 for line in infile:
                     line_separated = Converter.split_line(line)
                     line_utf = []
@@ -56,6 +75,16 @@ class Converter():
                             line_utf.append(chr(number + max_node_id))
                         i += 1
                     outfile.write("".join(line_utf) + "\n")
+                    if sentence_length != 0:
+                        lines_utf.append(line_utf)
+                if sentence_length != 0:
+                    with open(outfile_fasttext_path, "w") as outfile:
+                        i = 0
+                        for combination in itertools.combinations(lines_utf, sentence_length):
+                            if i == max_sentences:
+                                break
+                            outfile.write(" ".join(["".join(x) for x in combination]) + "\n")
+                            i += 1
 
 
 def parse_arguments():
@@ -66,6 +95,14 @@ def parse_arguments():
                         required=True)
     parser.add_argument('--processes',
                         help='Specify number of processes which should be used for the conversion',
+                        type=int,
+                        required=True)
+    parser.add_argument('--sentence_length',
+                        help='Specify how long a sentence should be. 0 if no output files for fasttext should be produced.',
+                        type=int,
+                        required=True)
+    parser.add_argument('--max_sentences',
+                        help='Specify maximal number of sentences per node pair',
                         type=int,
                         required=True)
 
@@ -80,7 +117,8 @@ if __name__ == "__main__":
 
     print('Searching max_node_id...')
     pool = Pool(processes=args.processes)
-    files = [os.path.join(args.dirpath, file) for file in os.listdir(args.dirpath) if not '_converted.txt' in file]
+    files = [os.path.join(args.dirpath, file) for file in os.listdir(args.dirpath) if
+             os.path.isfile(os.path.join(args.dirpath, file)) and not '_converted.txt' in file]
     results = pool.map(Converter.find_max_node_id, files)
     max_node_id = -1
     for file_max_node_id in results:
@@ -91,11 +129,19 @@ if __name__ == "__main__":
     print('Max_node_id is {}'.format(max_node_id))
 
     start = time.time()
-    args = [(os.path.join(args.dirpath, file),
-             os.path.join(args.dirpath, file[:-4] + '_converted.txt'),
-             max_node_id)
+    # infile_path, outfile_path, outfile_fasttext_path, max_node_id, sentence_length, max_sentences
+    args = [(file,
+             args.dirpath,
+             os.path.join(args.dirpath, 'converted'),
+             os.path.join(args.dirpath, 'fasttext'),
+             max_node_id,
+             args.sentence_length,
+             args.max_sentences)
             for file in os.listdir(args.dirpath) if
-            not '_converted.txt' in file or os.path.exists(file[:-4] + '_converted.txt')]
+            os.path.isfile(os.path.join(args.dirpath, file)) and
+            not '_converted.txt' in file or
+            os.path.exists(os.path.join(args.dirpath, file[:-4] + '_converted.txt')) or
+            os.path.exists(os.path.join(args.dirpath, 'converted', file[:-4] + '_converted.txt'))]
 
     pool.map(Converter.convert_file, args)
 
