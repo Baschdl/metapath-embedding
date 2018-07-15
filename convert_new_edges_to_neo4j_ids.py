@@ -39,6 +39,7 @@ if __name__ == "__main__":
     args = parse_arguments()
     neo = GraphDatabase.driver(args.uri, auth=(args.user, args.password))
     neo_ids = []
+    edges_with_new_nodes = 0
     with open(args.new_edges_list, 'r') as infile:
         with neo.session() as session:
             for line in tqdm(infile):
@@ -48,14 +49,17 @@ if __name__ == "__main__":
                 result1 = session.run('MATCH (n) WHERE n.id = "{}" RETURN ID(n)'.format(node1))
                 result1 = [rec["ID(n)"] for rec in result1]
                 if not result1:
+                    edges_with_new_nodes += 1
                     continue
                 id_node1 = result1[0]
                 result2 = session.run('MATCH (n) WHERE n.id = "{}" RETURN ID(n)'.format(node2))
                 result2 = [rec["ID(n)"] for rec in result2]
                 if not result2:
+                    edges_with_new_nodes += 1
                     continue
                 id_node2 = result2[0]
                 neo_ids.append((id_node1, id_node2))
+    print("There were {} eges with new nodes".format(edges_with_new_nodes))
 
     with open(args.converted_new_edges_list, 'w') as file:
         for node1, node2 in neo_ids:
