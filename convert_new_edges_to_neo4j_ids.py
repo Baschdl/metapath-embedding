@@ -46,13 +46,13 @@ if __name__ == "__main__":
                 node1, node2 = NewEdgeFinder.split_edge(line)
                 node1 = clean_qids(node1)
                 node2 = clean_qids(node2)
-                result1 = session.run('MATCH (n) WHERE n.id = "{}" RETURN ID(n)'.format(node1))
+                result1 = session.run('MATCH (n:Item) WHERE n.id = "{}" RETURN ID(n)'.format(node1))
                 result1 = [rec["ID(n)"] for rec in result1]
                 if not result1:
                     edges_with_new_nodes += 1
                     continue
                 id_node1 = result1[0]
-                result2 = session.run('MATCH (n) WHERE n.id = "{}" RETURN ID(n)'.format(node2))
+                result2 = session.run('MATCH (n:Item) WHERE n.id = "{}" RETURN ID(n)'.format(node2))
                 result2 = [rec["ID(n)"] for rec in result2]
                 if not result2:
                     edges_with_new_nodes += 1
