@@ -64,7 +64,7 @@ def parse_arguments():
                         type=bool,
                         default=True)
     parser.add_argument('--new_edges_file',
-                        help='Path where the pickled list of new edges should be saved',
+                        help='Path where the list of new edges should be saved',
                         type=str)
 
     return parser.parse_args()
