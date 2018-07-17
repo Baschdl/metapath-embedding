@@ -40,7 +40,7 @@ class Converter():
 
     @staticmethod
     def convert_file(args: Tuple[str, str, str, str, int, int, int]):
-        filename, infile_path, outfile_path, outfile_fasttext_path, max_node_id, sentence_length, max_sentences = args
+        filename, infile_path, outfile_path, outfile_fasttext_path, max_node_id, sentence_length = args
 
         try:
             os.makedirs(outfile_path)
@@ -79,11 +79,16 @@ class Converter():
                     if sentence_length != 0:
                         lines_utf.append(line_utf)
                 if sentence_length != 0:
+                    files = {}
+                    for i in range(sentence_length):
+                        files[i] = lines_utf.copy()
+                        random.shuffle(files[i])
                     with open(outfile_fasttext_path, "w") as outfile_fasttext:
-                        number_of_combinations = binom(len(lines_utf), sentence_length)
-                        for combination in itertools.combinations(lines_utf, sentence_length):
-                            if random.random() < max_sentences / number_of_combinations:
-                                outfile_fasttext.write(" ".join(["".join(x) for x in combination]) + "\n")
+                        for j in len(files[0]):
+                            sentence = []
+                            for i in range(sentence_length):
+                                sentence.append("".join(files[i][j]))
+                            outfile_fasttext.write(" ".join(sentence) + "\n")
 
 
 def parse_arguments():
@@ -99,11 +104,7 @@ def parse_arguments():
     parser.add_argument('--sentence_length',
                         help='Specify how long a sentence should be. 0 if no output files for fasttext should be produced.',
                         type=int,
-                        required=True)
-    parser.add_argument('--max_sentences',
-                        help='Specify maximal number of sentences per node pair',
-                        type=int,
-                        required=True)
+                        required=True),
     parser.add_argument('--max_node_id',
                         help='Specify max_node_id obtained from another run of the program',
                         type=int)
@@ -140,8 +141,7 @@ if __name__ == "__main__":
              os.path.join(args.dirpath, 'converted'),
              os.path.join(args.dirpath, 'fasttext'),
              max_node_id,
-             args.sentence_length,
-             args.max_sentences)
+             args.sentence_length)
             for file in os.listdir(args.dirpath) if
             os.path.isfile(os.path.join(args.dirpath, file)) and
             '_converted.txt' not in file or
