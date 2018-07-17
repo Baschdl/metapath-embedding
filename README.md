@@ -40,7 +40,8 @@ Import two different wikidata dumps into neo4j instances using https://github.co
 
 ## Mine meta-paths for positive and negative edges
 ### Positive edges
-- Convert list with new edges from previous step to list of neo4j ids with `python3 convert_new_edges_to_neo4j_ids.py`
+- Convert list with new edges from previous step to list of neo4j ids with `python3 convert_new_edges_to_neo4j_ids.py --new_edges_list ~/new_edges_t1_t3_undirected.txt --converted_new_edges_list new_edges_t1_t3_undirected_neo4j.txt --user user --password password --uri bolt://localhost:7687`.
+Takes around 1,5h.
 - Start mining with something like `CALL algo.computeAllMetaPathsBetweenInstances(5, 0, 0.999, {'edgelistFilepath':'/tmp/between_instances/positive_edgelist.txt'})`
 
 ### Negative edges
