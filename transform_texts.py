@@ -84,7 +84,7 @@ class Converter():
                         files[i] = lines_utf.copy()
                         random.shuffle(files[i])
                     with open(outfile_fasttext_path, "w") as outfile_fasttext:
-                        for j in len(files[0]):
+                        for j in range(len(files[0])):
                             sentence = []
                             for i in range(sentence_length):
                                 sentence.append("".join(files[i][j]))
