@@ -33,6 +33,8 @@ def parse_arguments():
 def clean_qids(node):
     if node[0] == "'" and node[-1] == "'":
         return (node[1:])[:-1]
+    else:
+        return node
 
 
 if __name__ == "__main__":
