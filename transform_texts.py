@@ -58,7 +58,7 @@ class Converter():
         outfile_fasttext_path = os.path.join(outfile_fasttext_path, filename[:-4] + '_fasttext.txt')
 
         with open(infile_path, "r") as infile:
-            with open(outfile_path, "w") as outfile:
+            with open(outfile_path, "w", , encoding="utf-8") as outfile:
                 lines_utf = []
                 for line in infile:
                     line_separated = Converter.split_line(line)
@@ -83,7 +83,7 @@ class Converter():
                     for i in range(sentence_length):
                         files[i] = lines_utf.copy()
                         random.shuffle(files[i])
-                    with open(outfile_fasttext_path, "w") as outfile_fasttext:
+                    with open(outfile_fasttext_path, "w", , encoding="utf-8") as outfile_fasttext:
                         for j in range(len(files[0])):
                             sentence = []
                             for i in range(sentence_length):
