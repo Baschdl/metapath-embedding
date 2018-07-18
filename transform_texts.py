@@ -135,6 +135,7 @@ if __name__ == "__main__":
     else:
         max_node_id = args.max_node_id
 
+    print("Start conversion of files...")
     start = time.time()
     args = [(file,
              args.dirpath,
