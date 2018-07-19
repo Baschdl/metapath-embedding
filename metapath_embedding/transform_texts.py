@@ -1,5 +1,5 @@
 import os
-from two_class_dict import TwoWayDict
+from metapath_embedding.two_class_dict import TwoWayDict
 import time
 import argparse
 from multiprocessing import Pool

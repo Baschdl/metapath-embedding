@@ -1,5 +1,5 @@
 from unittest import TestCase
-from find_neg_edges import parse_ids_from_filename
+from metapath_embedding.find_neg_edges import parse_ids_from_filename
 
 
 class TestParse_ids_from_filename(TestCase):

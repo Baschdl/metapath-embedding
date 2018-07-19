@@ -1,5 +1,5 @@
 from unittest import TestCase
-from find_new_edges import NewEdgeFinder
+from metapath_embedding.find_new_edges import NewEdgeFinder
 import os
 
 

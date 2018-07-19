@@ -1,9 +1,8 @@
 import argparse
 from tqdm import tqdm
-from find_new_edges import NewEdgeFinder
 from neo4j.v1 import GraphDatabase
 import os
-from find_new_edges import NewEdgeFinder
+from metapath_embedding.find_new_edges import NewEdgeFinder
 
 
 def parse_arguments():
