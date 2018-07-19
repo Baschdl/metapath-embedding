@@ -92,12 +92,20 @@ class Converter:
                             outfile_fasttext.write(" ".join(sentence) + "\n")
 
     @staticmethod
-    def convert_edge(max_node_id, number):
+    def convert_edge(number, max_node_id):
         return chr(number + max_node_id)
 
     @staticmethod
     def convert_node(number):
         return chr(number)
+
+    @staticmethod
+    def reverse_edge(codepoint, max_node_id):
+        return ord(codepoint) - max_node_id
+
+    @staticmethod
+    def reverse_node(codepoint):
+        return ord(codepoint)
 
 
 def parse_arguments():
