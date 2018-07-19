@@ -4,13 +4,14 @@ import time
 import argparse
 from multiprocessing import Pool
 from typing import Tuple
-import itertools
 import errno
-from scipy.special import binom
 import random
 
 
-class Converter():
+class Converter:
+    def __init__(self):
+        pass
+
     d = TwoWayDict()
 
     @staticmethod
@@ -58,7 +59,7 @@ class Converter():
         outfile_fasttext_path = os.path.join(outfile_fasttext_path, filename[:-4] + '_fasttext.txt')
 
         with open(infile_path, "r") as infile:
-            with open(outfile_path, "w", , encoding="utf-8") as outfile:
+            with open(outfile_path, "w") as outfile:
                 lines_utf = []
                 for line in infile:
                     line_separated = Converter.split_line(line)
@@ -71,9 +72,9 @@ class Converter():
                             print("Error for file {} in line '{}'".format(infile_path, line))
                             print(e)
                         if i % 2 == 0:
-                            line_utf.append(chr(number))
+                            line_utf.append(Converter.convert_node(number))
                         else:
-                            line_utf.append(chr(number + max_node_id))
+                            line_utf.append(Converter.convert_edge(max_node_id, number))
                         i += 1
                     outfile.write("".join(line_utf) + "\n")
                     if sentence_length != 0:
@@ -83,12 +84,20 @@ class Converter():
                     for i in range(sentence_length):
                         files[i] = lines_utf.copy()
                         random.shuffle(files[i])
-                    with open(outfile_fasttext_path, "w", , encoding="utf-8") as outfile_fasttext:
+                    with open(outfile_fasttext_path, "w") as outfile_fasttext:
                         for j in range(len(files[0])):
                             sentence = []
                             for i in range(sentence_length):
                                 sentence.append("".join(files[i][j]))
                             outfile_fasttext.write(" ".join(sentence) + "\n")
+
+    @staticmethod
+    def convert_edge(max_node_id, number):
+        return chr(number + max_node_id)
+
+    @staticmethod
+    def convert_node(number):
+        return chr(number)
 
 
 def parse_arguments():
