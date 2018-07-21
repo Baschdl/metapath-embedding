@@ -57,6 +57,7 @@ Takes around 1,5h.
 - Download the edge lists with `download_edgelist.sh`
 - **TODO:** Add bolder warning for failed downloads
 - Append the edge lists to one big list with `concat_edgelists.sh`
+- If neccessary, subsample the nodelist with `shuf -n number_of_nodes all-edgelist.csv > all-edgelist-subsample.csv`
 
 ## Convert edge list to bcsr
 - **TODO:** Add header line to big edge list
