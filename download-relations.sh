@@ -10,7 +10,7 @@ do
     echo "Calculating relation list for ID(r) up to " $((i * size_of_download_in_edges))
     query=$( echo '{"statements":[{"statement":"MATCH ()-[r]-() WHERE ID(r) > ' \
         $(( (i-1) * size_of_download_in_edges)) ' AND ID(r) < ' $((i * size_of_download_in_edges)) \
-        ' RETURN ID(r) as r"}]}' )
+        ' RETURN r.by as r"}]}' )
     curl -H accept:application/json -H content-type:application/json \
          -d "${query}" \
          -u neo4j:caramelBunny1998\
