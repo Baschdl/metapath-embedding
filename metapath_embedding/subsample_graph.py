@@ -1,24 +1,27 @@
 import random
 import argparse
+from tqdm import tqdm
 
 from metapath_embedding.find_new_edges import NewEdgeFinder
 
 
 def filter(all_edges_filepath, filtered_edges_filepath, part_of_nodes):
+    print("Read all nodes and edges...")
     edges = []
     nodes = set()
     with open(all_edges_filepath, 'r') as all_edges_file:
-        for line in all_edges_file:
+        for line in tqdm(all_edges_file):
             node0, node1 = NewEdgeFinder.split_edge(line)
             node0, node1 = int(node0), int(node1)
             edges.append((node0, node1))
             nodes.add(node0)
             nodes.add(node1)
-
+    
+    print("Sample nodes...")
     nodes_subsample = random.sample(nodes, int(part_of_nodes * len(nodes)))
-    filtered_edges = []
+    print("Write new edges to file...")
     with open(filtered_edges_filepath, 'w') as all_edges_file:
-        for edge in edges:
+        for edge in tqdm(edges):
             if edge[0] in nodes_subsample and edge[1] in nodes_subsample:
                 all_edges_file.write("{} {}\n".format(edge[0], edge[1]))
 
