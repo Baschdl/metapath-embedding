@@ -26,14 +26,14 @@ def filter(all_edges_filepath, filtered_edges_filepath, part_of_nodes, number_of
         nodes_subsamples.append(random.sample(nodes, int(part_of_nodes * len(nodes))))
     print("Write new edges to file...")
     args = []
-    for subsample in nodes_subsamples:
-        args.append((edges, filtered_edges_filepath, subsample))
+    for i, subsample in enumerate(nodes_subsamples):
+        args.append((edges, filtered_edges_filepath, subsample, i))
     pool = Pool()
     pool.map(write_edgelist_to_file, args)
 
 
 def write_edgelist_to_file(args):
-    edges, filtered_edges_filepath, nodes_subsample = args
+    edges, filtered_edges_filepath, nodes_subsample, i = args
     filtered_edges = []
     args = []
     for nodes_subsample_part in chunkIt(nodes_subsample, os.cpu_count()):
@@ -42,7 +42,7 @@ def write_edgelist_to_file(args):
     results = pool.map(filter_edges, args)
     for result in results:
         filtered_edges.extend(result)
-    with open(filtered_edges_filepath, 'w') as all_edges_file:
+    with open("{}-{}".format(filtered_edges_filepath, i), 'w') as all_edges_file:
         for edge in filtered_edges:
             all_edges_file.write("{} {}\n".format(edge[0], edge[1]))
 
