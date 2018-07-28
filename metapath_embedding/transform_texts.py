@@ -59,7 +59,7 @@ class Converter:
         outfile_fasttext_path = os.path.join(outfile_fasttext_path, filename[:-4] + '_fasttext.txt')
 
         with open(infile_path, "r") as infile:
-            with open(outfile_path, "w") as outfile:
+            with open(outfile_path, "wb") as outfile:
                 lines_utf = []
                 for line in infile:
                     line_separated = Converter.split_line(line)
@@ -76,7 +76,8 @@ class Converter:
                         else:
                             line_utf.append(Converter.convert_edge(max_node_id, number))
                         i += 1
-                    outfile.write("".join(line_utf) + "\n")
+                    line_utf.append("\n")
+                    outfile.write(u"".join(line_utf).encode('utf-8'))
                     if sentence_length != 0:
                         lines_utf.append(line_utf)
                 if sentence_length != 0:
