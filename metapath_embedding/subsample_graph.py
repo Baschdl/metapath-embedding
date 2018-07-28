@@ -87,4 +87,4 @@ def parse_arguments():
 
 if __name__ == "__main__":
     args = parse_arguments()
-    filter(args.all_edges_filepath, args.filtered_edges_filepath, args.part_of_nodes, number_of_subsamples)
+    filter(args.all_edges_filepath, args.filtered_edges_filepath, args.part_of_nodes, args.number_of_subsamples)
