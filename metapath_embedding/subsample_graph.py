@@ -1,6 +1,7 @@
 import random
 import argparse
 from multiprocessing.pool import Pool
+from more_itertools import divide
 
 import os
 from tqdm import tqdm
@@ -36,7 +37,8 @@ def write_edgelist_to_file(args):
     edges, filtered_edges_filepath, nodes_subsample, i = args
     filtered_edges = []
     args = []
-    for nodes_subsample_part in chunkIt(nodes_subsample, os.cpu_count()):
+    for nodes_subsample_part in divide(os.cpu_count(), nodes_subsample):
+        nodes_subsample_part = list(nodes_subsample_part)
         args.append((edges, filtered_edges, nodes_subsample_part))
     pool = Pool()
     results = pool.map(filter_edges, args)
@@ -52,19 +54,6 @@ def filter_edges(args):
     for edge in tqdm(edges):
         if edge[0] in nodes_subsample and edge[1] in nodes_subsample:
             filtered_edges.append(edge)
-
-
-def chunkIt(seq, num):
-    # Code from https://stackoverflow.com/a/2130035/3342058
-    avg = len(seq) / float(num)
-    out = []
-    last = 0.0
-
-    while last < len(seq):
-        out.append(seq[int(last):int(last + avg)])
-        last += avg
-
-    return out
 
 
 def parse_arguments():
