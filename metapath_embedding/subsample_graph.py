@@ -15,7 +15,7 @@ def filter(all_edges_filepath, filtered_edges_filepath, part_of_nodes):
             nodes.add(node0)
             nodes.add(node1)
 
-    nodes_subsample = random.choices(nodes, k=part_of_nodes * len(nodes))
+    nodes_subsample = random.sample(nodes, part_of_nodes * len(nodes))
     filtered_edges = []
     with open(filtered_edges_filepath, 'r') as all_edges_file:
         for edge in edges:
